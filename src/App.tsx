@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { debounce } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Card from "./components/card";
 import { ToDo } from "./d";
@@ -19,7 +20,9 @@ const baseToDos = [
 ];
 
 function App() {
+    // 모든 투두 객체들을 포함할 배열
     const [toDos, setToDos] = useState<ToDo[]>(baseToDos);
+    // 인풋 값으로 계속 변경될 하나의 투두 객체
     const [todo, setTodo] = useState<ToDo>({
         id: 0,
         title: "",
@@ -27,19 +30,36 @@ function App() {
         isDone: false,
     });
 
+    // useCallback useMemo 여러가지 써보다가 방법은 알겠는데, 의존성 배열 관련 ES Lint 에러, 경고를 다 없앨 수 없어서
+    // 그냥 ref 에 넣어서 고정시켜버렸음
+    // debounce interval 300ms
+    const debounced = useRef(debounce(setTodo, 300)).current;
+
+    // 인풋 체인지 핸들러
+    // 인풋 값이 변경될 때마다 불변성 유지하며 객체 생성하고 debounced에서 반환된 setTodo로 setState
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        debounced((prevTodo) => ({
+            ...prevTodo,
+            id: toDos.length,
+            [name]: value,
+        }));
+    };
+
+    // 폼 서브밋 핸들러
+    // 인풋핸들러에서 설정된 투두 객체를 투두스 배열에 추가
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (todo) setToDos([...toDos, todo]);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const updatedTodo: ToDo = {
-            ...todo,
-            id: toDos.length,
-            [e.target.name]: e.target.value,
-        };
-        setTodo(updatedTodo);
-    };
+    // clean up 도 꼭 챙겨주기...
+    // 안그러면 300ms 가 짧긴 해도 메모리 손실
+    useEffect(() => {
+        return () => debounced.cancel();
+    }, [debounced]);
+
+    // console.log(todo)
 
     return (
         <>
@@ -83,7 +103,7 @@ function App() {
                                             key={i}
                                             todo={e}
                                             toDos={toDos}
-                                            input={todo}
+                                            inputted={todo}
                                             setToDos={setToDos}
                                         />
                                     );
@@ -102,7 +122,7 @@ function App() {
                                             key={i}
                                             todo={e}
                                             toDos={toDos}
-                                            input={todo}
+                                            inputted={todo}
                                             setToDos={setToDos}
                                         />
                                     );
@@ -117,3 +137,25 @@ function App() {
 }
 
 export default App;
+
+// 인풋 체인지 핸들러
+// 인풋 값이 변경될 때마다 불변성 유지하며 객체 생성하고 setState
+// 인풋 할때마다 setState 하는게 불필요해 보여서 lodash 사용하여 debouncing 해줬는데 이게 맞나...?
+// 이벤트 핸들러에서 debounce 사용시 즉시 실행 함수로 처리
+// React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead
+// 위와 같은 ES Lint 의존성 배열 경고 표시로,
+// debounce 를 useCallback 내부에서 실행
+// const handleChange = useCallback(
+//     (e: React.ChangeEvent<HTMLInputElement>) => {
+//         const { name, value } = e.target;
+//         const newTodo = {
+//             ...todo,
+//             id: toDos.length,
+//             [name]: value,
+//         };
+//         debounce(() => setTodo(newTodo), 300)();
+//     },
+//     // useCallback 의존성 배열에 todo 와 ES Lint 경고대로 toDos.length 추가
+//     // [todo, toDos.length]
+//     [setTodo]
+// );
