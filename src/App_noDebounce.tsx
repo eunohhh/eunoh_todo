@@ -1,7 +1,4 @@
-import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
-// import { useState } from "react";
-
+import { useState } from "react";
 import "./App.css";
 import Card from "./components/card";
 import { ToDo } from "./d";
@@ -32,20 +29,17 @@ function App() {
         isDone: false,
     });
 
-    // useCallback useMemo 여러가지 써보다가 방법은 알겠는데, 의존성 배열 관련 ES Lint 에러, 경고를 다 없앨 수 없어서
-    // 그냥 ref 에 넣어서 고정시켜버렸음
-    // debounce interval 300ms
-    const debounced = useRef(debounce(setTodo, 300)).current;
-
     // 인풋 체인지 핸들러
     // 인풋 값이 변경될 때마다 불변성 유지하며 객체 생성하고 debounced에서 반환된 setTodo로 setState
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        debounced((prevTodo) => ({
-            ...prevTodo,
+        const newTodo = {
+            ...todo,
             id: toDos.length,
             [name]: value,
-        }));
+        };
+        setTodo(newTodo);
     };
 
     // 폼 서브밋 핸들러
@@ -57,11 +51,11 @@ function App() {
 
     // clean up 도 꼭 챙겨주기...
     // 안그러면 300ms 가 짧긴 해도 메모리 손실
-    useEffect(() => {
-        return () => debounced.cancel();
-    }, [debounced]);
+    // useEffect(() => {
+    //     return () => debounced.cancel();
+    // }, [debounced]);
 
-    // console.log(todo);
+    console.log(todo);
 
     return (
         <>
@@ -80,7 +74,7 @@ function App() {
                                 name="title"
                                 required
                                 onChange={handleChange}
-                                // value={todo.title}
+                                value={todo.title}
                             ></input>
                             <label htmlFor="body">내용</label>
                             <input
@@ -88,7 +82,7 @@ function App() {
                                 name="body"
                                 required
                                 onChange={handleChange}
-                                // value={todo.body}
+                                value={todo.body}
                             ></input>
                         </div>
 
