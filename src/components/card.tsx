@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ToDo } from "../d";
 import "./card.css";
 
@@ -8,7 +9,7 @@ type TodoProps = {
     setToDos: React.Dispatch<React.SetStateAction<ToDo[]>>;
 };
 
-export default function Card({ todo, toDos, inputted, setToDos }: TodoProps) {
+const Card = memo(({ todo, toDos, inputted, setToDos }: TodoProps) => {
     // 투두 완료로 처리
     const completeToDo = (copied: ToDo[]) => {
         if (todo.isDone) {
@@ -90,7 +91,9 @@ export default function Card({ todo, toDos, inputted, setToDos }: TodoProps) {
             </div>
         </section>
     );
-}
+});
+
+export default Card;
 
 // function areEqual(prevProps: TodoProps, nextProps: TodoProps) {
 //     return prevProps.todo.id === nextProps.todo.id && prevProps.todo.isDone === nextProps.todo.isDone;
