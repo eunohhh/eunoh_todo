@@ -1,6 +1,6 @@
-export interface ToDo{
-    id : number,
-    title : string,
-    body : string,
-    isDone : boolean
+export interface ToDo {
+    id: string;
+    title: string;
+    body: string;
+    isDone: boolean;
 }
