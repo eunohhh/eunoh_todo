@@ -11,13 +11,11 @@ type TodoProps = {
 
 const Card = memo(({ todo, toDos, inputted, setToDos }: TodoProps) => {
     // 투두 완료로 처리
-    const completeToDo = (copied: ToDo[], cases: string) => {
+    const completeToDo = (copied: ToDo[]) => {
         // 현재 컴포넌트 데이터(todo)의 id 와 일치하는 id를 가진 객체를 toDos 배열에서 찾아서
         // 찾은 객체의 isDone 상태를 true 로 변경
         const mapped = copied.map((e) => {
-            if (e.id === todo.id) {
-                cases === "완료" ? (e.isDone = true) : (e.isDone = false);
-            }
+            if (e.id === todo.id) e.isDone = !e.isDone;
             return e;
         });
         setToDos(mapped);
@@ -63,8 +61,7 @@ const Card = memo(({ todo, toDos, inputted, setToDos }: TodoProps) => {
         const copied = [...toDos];
 
         if (e.currentTarget.id === "fin_cancel") {
-            const cases = e.currentTarget.innerText;
-            completeToDo(copied, cases);
+            completeToDo(copied);
         } else if (e.currentTarget.id === "update") {
             updateToDo(copied);
         } else if (e.currentTarget.id === "del") {
