@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 // import { useState } from "react";
 
 import "./App.css";
-import Card from "./components/Card/Card";
+// import Card from "./components/Card/Card";
 import { ToDo } from "./d";
 
 const baseToDos = [
@@ -103,7 +103,7 @@ function App() {
                     <div className="content_box">
                         <h2>Working...🔥</h2>
                         <div className="content">
-                            {toDos
+                            {/* {toDos
                                 .filter((e) => !e.isDone)
                                 .map((e, i) => (
                                     <Card
@@ -113,14 +113,14 @@ function App() {
                                         inputted={todo}
                                         setToDos={setToDos}
                                     />
-                                ))}
+                                ))} */}
                         </div>
                     </div>
 
                     <div className="content_box">
                         <h2>Done...🎉</h2>
                         <div className="content">
-                            {toDos
+                            {/* {toDos
                                 .filter((e) => e.isDone)
                                 .map((e, i) => (
                                     <Card
@@ -130,7 +130,7 @@ function App() {
                                         inputted={todo}
                                         setToDos={setToDos}
                                     />
-                                ))}
+                                ))} */}
                         </div>
                     </div>
                 </section>
