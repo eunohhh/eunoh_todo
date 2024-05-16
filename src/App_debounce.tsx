@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 // import { useState } from "react";
 
 import "./App.css";
-import Card from "./components/card";
+import Card from "./components/Card/Card";
 import { ToDo } from "./d";
 
 const baseToDos = [

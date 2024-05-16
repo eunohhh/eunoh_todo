@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./App.css";
-import Card from "./components/card";
+import Card from "./components/Card/Card";
+import Form from "./components/Form/Form";
 import { ToDo } from "./d";
 
 const baseToDos = [
@@ -22,33 +23,22 @@ const baseToDos = [
 function App() {
     // 모든 투두 객체들을 포함할 배열
     const [toDos, setToDos] = useState<ToDo[]>(baseToDos);
-    // 인풋 값으로 계속 변경될 하나의 투두 객체
-    const [todo, setTodo] = useState<ToDo>({
-        id: "",
-        title: "",
-        body: "",
-        isDone: false,
-    });
 
-    // 인풋 체인지 핸들러
-    // 인풋 값이 변경될 때마다 불변성 유지하며 객체 생성
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        const newTodo = {
-            ...todo,
-            [name]: value,
-        };
-        setTodo(newTodo);
-    };
+    const addToDo = (newTodo: ToDo) =>
+        setToDos((prevToDos) => [...prevToDos, newTodo]);
 
-    // 폼 서브밋 핸들러
-    // 인풋핸들러에서 설정된 투두 객체를 투두스 배열에 추가
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (todo) setToDos([...toDos, { ...todo, id: uuidv4() }]);
-    };
+    const deleteToDo = (toDoId: string) =>
+        setToDos((prevToDos) => prevToDos.filter((todo) => todo.id !== toDoId));
 
-    // console.log(toDos);
+    const toggleIsDone = (toDoId: string) =>
+        setToDos((prevToDos) =>
+            prevToDos.map((todo) =>
+                todo.id === toDoId ? { ...todo, isDone: !todo.isDone } : todo
+            )
+        );
+
+    const workingToDos = toDos.filter((todo) => !todo.isDone);
+    const doneToDos = toDos.filter((todo) => todo.isDone);
 
     return (
         <>
@@ -58,7 +48,9 @@ function App() {
                     <p>React</p>
                 </header>
 
-                <section className="input_section">
+                <Form addToDo={addToDo} />
+
+                {/* <section className="input_section">
                     <form className="submit_form" onSubmit={handleSubmit}>
                         <div className="input_area">
                             <label htmlFor="title">제목</label>
@@ -81,40 +73,38 @@ function App() {
 
                         <button type="submit">추가하기</button>
                     </form>
-                </section>
+                </section> */}
 
                 <section className="content_section">
                     <div className="content_box">
                         <h2>Working...🔥</h2>
                         <div className="content">
-                            {toDos
-                                .filter((e) => !e.isDone)
-                                .map((e, i) => (
-                                    <Card
-                                        key={i}
-                                        todo={e}
-                                        toDos={toDos}
-                                        inputted={todo}
-                                        setToDos={setToDos}
-                                    />
-                                ))}
+                            {workingToDos.map((e, i) => (
+                                <Card
+                                    key={i}
+                                    deleteToDo={deleteToDo}
+                                    toggleIsDone={toggleIsDone}
+                                    todo={e}
+                                    // toDos={toDos}
+                                    // setToDos={setToDos}
+                                />
+                            ))}
                         </div>
                     </div>
 
                     <div className="content_box">
                         <h2>Done...🎉</h2>
                         <div className="content">
-                            {toDos
-                                .filter((e) => e.isDone)
-                                .map((e, i) => (
-                                    <Card
-                                        key={i}
-                                        todo={e}
-                                        toDos={toDos}
-                                        inputted={todo}
-                                        setToDos={setToDos}
-                                    />
-                                ))}
+                            {doneToDos.map((e, i) => (
+                                <Card
+                                    key={i}
+                                    deleteToDo={deleteToDo}
+                                    toggleIsDone={toggleIsDone}
+                                    todo={e}
+                                    // toDos={toDos}
+                                    // setToDos={setToDos}
+                                />
+                            ))}
                         </div>
                     </div>
                 </section>
