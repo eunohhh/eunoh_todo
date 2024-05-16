@@ -32,7 +32,6 @@ function App() {
 
     // 인풋 체인지 핸들러
     // 인풋 값이 변경될 때마다 불변성 유지하며 객체 생성
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const newTodo = {
