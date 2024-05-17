@@ -1,115 +1,12 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import "./App.css";
-import Card from "./components/Card/Card";
-import Form from "./components/Form/Form";
-import { ToDo } from "./d";
-
-const baseToDos = [
-    {
-        id: uuidv4(),
-        title: "리액트 공부하기",
-        body: "리액트 기초를 공부해 봅시다",
-        isDone: false,
-    },
-    {
-        id: uuidv4(),
-        title: "잠자기",
-        body: "잠을 잘 자자",
-        isDone: true,
-    },
-];
+import Layout from "./components/Layout";
+import ToDoContainer from "./components/ToDoContainer/ToDoContainer";
 
 function App() {
-    // 모든 투두 객체들을 포함할 배열
-    const [toDos, setToDos] = useState<ToDo[]>(baseToDos);
-
-    const addToDo = (newTodo: ToDo) =>
-        setToDos((prevToDos) => [...prevToDos, newTodo]);
-
-    const deleteToDo = (toDoId: string) =>
-        setToDos((prevToDos) => prevToDos.filter((todo) => todo.id !== toDoId));
-
-    const toggleIsDone = (toDoId: string) =>
-        setToDos((prevToDos) =>
-            prevToDos.map((todo) =>
-                todo.id === toDoId ? { ...todo, isDone: !todo.isDone } : todo
-            )
-        );
-
-    const workingToDos = toDos.filter((todo) => !todo.isDone);
-    const doneToDos = toDos.filter((todo) => todo.isDone);
-
     return (
-        <>
-            <div className="top_wrapper">
-                <header className="my_header">
-                    <h3>My Todo List</h3>
-                    <p>React</p>
-                </header>
-
-                <Form addToDo={addToDo} />
-
-                {/* <section className="input_section">
-                    <form className="submit_form" onSubmit={handleSubmit}>
-                        <div className="input_area">
-                            <label htmlFor="title">제목</label>
-                            <input
-                                type="text"
-                                name="title"
-                                required
-                                onChange={handleChange}
-                                value={todo.title}
-                            ></input>
-                            <label htmlFor="body">내용</label>
-                            <input
-                                type="text"
-                                name="body"
-                                required
-                                onChange={handleChange}
-                                value={todo.body}
-                            ></input>
-                        </div>
-
-                        <button type="submit">추가하기</button>
-                    </form>
-                </section> */}
-
-                <section className="content_section">
-                    <div className="content_box">
-                        <h2>Working...🔥</h2>
-                        <div className="content">
-                            {workingToDos.map((e, i) => (
-                                <Card
-                                    key={i}
-                                    deleteToDo={deleteToDo}
-                                    toggleIsDone={toggleIsDone}
-                                    todo={e}
-                                    // toDos={toDos}
-                                    // setToDos={setToDos}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="content_box">
-                        <h2>Done...🎉</h2>
-                        <div className="content">
-                            {doneToDos.map((e, i) => (
-                                <Card
-                                    key={i}
-                                    deleteToDo={deleteToDo}
-                                    toggleIsDone={toggleIsDone}
-                                    todo={e}
-                                    // toDos={toDos}
-                                    // setToDos={setToDos}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </>
+        <Layout>
+            <ToDoContainer />
+        </Layout>
     );
 }
 

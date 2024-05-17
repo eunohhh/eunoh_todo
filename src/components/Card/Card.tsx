@@ -19,7 +19,7 @@ const Card = memo(({ todo, deleteToDo, toggleIsDone }: TodoProps) => {
     };
 
     return (
-        <section className={`card ${todo.isDone ? "done" : "work"}`}>
+        <ul className={`card ${todo.isDone ? "done" : "work"}`}>
             <div className="card_top">
                 <h3>{todo.title}</h3>
                 <p>{todo.body}</p>
@@ -35,7 +35,7 @@ const Card = memo(({ todo, deleteToDo, toggleIsDone }: TodoProps) => {
                     {todo.isDone ? "취소" : "완료"}
                 </div>
             </div>
-        </section>
+        </ul>
     );
 });
 
