@@ -1,45 +1,49 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "../../App.css";
 import { ToDo } from "../../d";
+import { AppDispatch, RootState } from "../../store/store";
+import {
+    addToDo,
+    deleteToDo,
+    fetchToDos,
+    toggleIsDone,
+} from "../../store/todoSlice";
 import CardList from "../CardList";
 import Form from "../Form";
 
 function ToDoContainer() {
-    // 모든 투두 객체들을 포함할 배열
-    const [toDos, setToDos] = useState<ToDo[] | null>(null);
-
-    const fetchToDos = async () => {
-        const { data } = await axios.get("http://localhost:3001/todos");
-        setToDos(data);
-    };
-
-    const addToDo = (newTodo: ToDo) =>
-        setToDos((prevToDos) => prevToDos && [...prevToDos, newTodo]);
-
-    const deleteToDo = (toDoId: string) =>
-        setToDos(
-            (prevToDos) =>
-                prevToDos && prevToDos.filter((todo) => todo.id !== toDoId)
-        );
-
-    const toggleIsDone = (toDoId: string) =>
-        setToDos(
-            (prevToDos) =>
-                prevToDos &&
-                prevToDos.map((todo) =>
-                    todo.id === toDoId
-                        ? { ...todo, isDone: !todo.isDone }
-                        : todo
-                )
-        );
+    const dispatch: AppDispatch = useDispatch();
+    const { toDos, loading, error } = useSelector(
+        (state: RootState) => state.toDos
+    );
 
     useEffect(() => {
-        fetchToDos();
-    }, []);
+        dispatch(fetchToDos());
+    }, [dispatch]);
 
-    const workingToDos: ToDo[] = (toDos || []).filter((todo) => !todo.isDone);
-    const doneToDos: ToDo[] = (toDos || []).filter((todo) => todo.isDone);
+    const handleAddToDo = (newTodo: ToDo) => {
+        dispatch(addToDo(newTodo));
+    };
+
+    const handleDeleteToDO = (toDoId: string) => {
+        dispatch(deleteToDo(toDoId));
+    };
+
+    const handleToggleIsDone = (toDoId: string) => {
+        dispatch(toggleIsDone(toDoId));
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    const workingToDos: ToDo[] = toDos.filter((todo: ToDo) => !todo.isDone);
+    const doneToDos: ToDo[] = toDos.filter((todo: ToDo) => todo.isDone);
 
     console.log(toDos);
 
@@ -51,20 +55,20 @@ function ToDoContainer() {
                     <p>React</p>
                 </header>
 
-                <Form addToDo={addToDo} />
+                <Form addToDo={handleAddToDo} />
 
                 <section className="content_section">
                     <CardList
                         title={"Working...🔥"}
                         toDos={workingToDos}
-                        deleteToDo={deleteToDo}
-                        toggleIsDone={toggleIsDone}
+                        deleteToDo={handleDeleteToDO}
+                        toggleIsDone={handleToggleIsDone}
                     />
                     <CardList
                         title={"Done...🎉"}
                         toDos={doneToDos}
-                        deleteToDo={deleteToDo}
-                        toggleIsDone={toggleIsDone}
+                        deleteToDo={handleDeleteToDO}
+                        toggleIsDone={handleToggleIsDone}
                     />
                 </section>
             </div>
