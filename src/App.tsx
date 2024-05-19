@@ -1,6 +1,6 @@
 import "./App.css";
 import Layout from "./components/Layout";
-import ToDoContainer from "./components/ToDoContainer/ToDoContainer";
+import ToDoContainer from "./components/ToDoContainer";
 
 function App() {
     return (

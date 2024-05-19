@@ -1,44 +1,47 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import "../../App.css";
 import { ToDo } from "../../d";
-import CardList from "../CardList/CardList";
-import Form from "../Form/Form";
-
-const baseToDos = [
-    {
-        id: uuidv4(),
-        title: "리액트 공부하기",
-        body: "리액트 기초를 공부해 봅시다",
-        isDone: false,
-    },
-    {
-        id: uuidv4(),
-        title: "잠자기",
-        body: "잠을 잘 자자",
-        isDone: true,
-    },
-];
+import CardList from "../CardList";
+import Form from "../Form";
 
 function ToDoContainer() {
     // 모든 투두 객체들을 포함할 배열
-    const [toDos, setToDos] = useState<ToDo[]>(baseToDos);
+    const [toDos, setToDos] = useState<ToDo[] | null>(null);
+
+    const fetchToDos = async () => {
+        const { data } = await axios.get("http://localhost:3001/todos");
+        setToDos(data);
+    };
 
     const addToDo = (newTodo: ToDo) =>
-        setToDos((prevToDos) => [...prevToDos, newTodo]);
+        setToDos((prevToDos) => prevToDos && [...prevToDos, newTodo]);
 
     const deleteToDo = (toDoId: string) =>
-        setToDos((prevToDos) => prevToDos.filter((todo) => todo.id !== toDoId));
-
-    const toggleIsDone = (toDoId: string) =>
-        setToDos((prevToDos) =>
-            prevToDos.map((todo) =>
-                todo.id === toDoId ? { ...todo, isDone: !todo.isDone } : todo
-            )
+        setToDos(
+            (prevToDos) =>
+                prevToDos && prevToDos.filter((todo) => todo.id !== toDoId)
         );
 
-    const workingToDos = toDos.filter((todo) => !todo.isDone);
-    const doneToDos = toDos.filter((todo) => todo.isDone);
+    const toggleIsDone = (toDoId: string) =>
+        setToDos(
+            (prevToDos) =>
+                prevToDos &&
+                prevToDos.map((todo) =>
+                    todo.id === toDoId
+                        ? { ...todo, isDone: !todo.isDone }
+                        : todo
+                )
+        );
+
+    useEffect(() => {
+        fetchToDos();
+    }, []);
+
+    const workingToDos: ToDo[] = (toDos || []).filter((todo) => !todo.isDone);
+    const doneToDos: ToDo[] = (toDos || []).filter((todo) => todo.isDone);
+
+    console.log(toDos);
 
     return (
         <>
@@ -70,3 +73,18 @@ function ToDoContainer() {
 }
 
 export default ToDoContainer;
+
+// const baseToDos = [
+//     {
+//         id: uuidv4(),
+//         title: "리액트 공부하기",
+//         body: "리액트 기초를 공부해 봅시다",
+//         isDone: false,
+//     },
+//     {
+//         id: uuidv4(),
+//         title: "잠자기",
+//         body: "잠을 잘 자자",
+//         isDone: true,
+//     },
+// ];

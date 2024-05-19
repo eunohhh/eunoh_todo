@@ -1,5 +1,5 @@
 import { ToDo } from "../../d";
-import Card from "../Card/Card";
+import Card from "../Card";
 import "../Card/Card.css";
 
 type CardListProps = {
