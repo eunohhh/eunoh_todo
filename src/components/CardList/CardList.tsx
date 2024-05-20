@@ -1,29 +1,48 @@
-import { ToDo } from "../../d";
+import styled from "styled-components";
+import { Todo } from "../../types/supabase";
 import Card from "../Card";
-import "../Card/Card.css";
 
 type CardListProps = {
     title: string;
-    toDos: ToDo[];
-    deleteToDo: (arg: string) => void;
-    toggleIsDone: (arg: string) => void;
+    toDos: Todo[];
+    // deleteToDo: (arg: number) => void;
+    // toggleIsDone: (arg: number) => void;
 };
 
-function CardList({ title, toDos, deleteToDo, toggleIsDone }: CardListProps) {
+const ContentSection = styled.section`
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+`;
+
+const ContentH2 = styled.h2`
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: rgb(79, 79, 79);
+    padding-bottom: 0.5rem;
+    box-sizing: border-box;
+`;
+
+const ContentDiv = styled.div`
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+`;
+
+function CardList({ title, toDos }: CardListProps) {
     return (
-        <section className="content_box">
-            <h2>{title}</h2>
-            <div className="content">
+        <ContentSection>
+            <ContentH2>{title}</ContentH2>
+            <ContentDiv className="content">
                 {toDos.map((e, i) => (
-                    <Card
-                        key={i}
-                        deleteToDo={deleteToDo}
-                        toggleIsDone={toggleIsDone}
-                        todo={e}
-                    />
+                    <Card key={i} todo={e} />
                 ))}
-            </div>
-        </section>
+            </ContentDiv>
+        </ContentSection>
     );
 }
 

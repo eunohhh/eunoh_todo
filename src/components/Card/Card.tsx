@@ -1,41 +1,99 @@
 import { memo } from "react";
-import { ToDo } from "../../d";
-import "./Card.css";
+import { useDispatch } from "react-redux";
+import styled from "styled-components";
+import { AppDispatch } from "../../store/store";
+import { deleteToDo, updateToDo } from "../../store/todoSlice";
+import type { Todo } from "../../types/supabase";
 
 type TodoProps = {
-    todo: ToDo;
-    deleteToDo: (arg: string) => void;
-    toggleIsDone: (arg: string) => void;
+    todo: Todo;
+    // deleteToDo: (arg: number) => void;
+    // toggleIsDone: (arg: number) => void;
 };
 
-const Card = memo(({ todo, deleteToDo, toggleIsDone }: TodoProps) => {
+const CardUl = styled.ul<{ $isDone: boolean | null }>`
+    width: 17rem;
+    height: 13rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border: ${({ $isDone }) =>
+        $isDone ? "3px solid rgb(111, 111, 254)" : "3px solid rgb(0, 196, 46)"};
+`;
+
+const CardTopDiv = styled.div`
+    width: 100%;
+    height: 65%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+`;
+
+const CardButtonsDiv = styled.div`
+    width: 100%;
+    height: 35%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+`;
+
+const CardButton = styled.button<{ $role: string }>`
+    width: 4rem;
+    height: 2rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    background-color: white;
+    border: ${({ $role }) =>
+        $role === "del" ? "3px solid rgb(255, 68, 68)" : "3px solid green"};
+    cursor: pointer;
+`;
+
+const Card = memo(({ todo }: TodoProps) => {
+    const dispatch: AppDispatch = useDispatch();
+
     // 클릭 핸들러
-    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (e.currentTarget.id === "fin_cancel") {
-            toggleIsDone(todo.id);
+            dispatch(updateToDo(todo));
+
+            // toggleIsDone(todo.id);
         } else if (e.currentTarget.id === "del") {
-            deleteToDo(todo.id);
+            if (confirm("정말 삭제 하시겠습니까?")) {
+                dispatch(deleteToDo(todo.id));
+            } else {
+                return;
+            }
         }
     };
 
     return (
-        <ul className={`card ${todo.isDone ? "done" : "work"}`}>
-            <div className="card_top">
+        <CardUl $isDone={todo.isDone}>
+            <CardTopDiv>
                 <h3>{todo.title}</h3>
                 <p>{todo.body}</p>
-            </div>
-            <div className="card_buttons">
-                <div className="btn del" id="del" onClick={handleClick}>
+            </CardTopDiv>
+            <CardButtonsDiv>
+                <CardButton $role="del" id="del" onClick={handleClick}>
                     삭제
-                </div>
+                </CardButton>
                 {/* <div className="btn update" id="update" onClick={handleClick}>
                     수정
                 </div> */}
-                <div className="btn fin" id="fin_cancel" onClick={handleClick}>
+                <CardButton $role="fin" id="fin_cancel" onClick={handleClick}>
                     {todo.isDone ? "취소" : "완료"}
-                </div>
-            </div>
-        </ul>
+                </CardButton>
+            </CardButtonsDiv>
+        </CardUl>
     );
 });
 

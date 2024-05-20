@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../../App.css";
-import { ToDo } from "../../d";
 import { AppDispatch, RootState } from "../../store/store";
 import {
-    addToDo,
-    deleteToDo,
-    fetchToDos,
-    toggleIsDone,
+    // addToDo,
+    // deleteToDo,
+    getToDos,
 } from "../../store/todoSlice";
+import { Todo } from "../../types/supabase";
 import CardList from "../CardList";
 import Form from "../Form";
 
@@ -19,20 +18,20 @@ function ToDoContainer() {
     );
 
     useEffect(() => {
-        dispatch(fetchToDos());
+        dispatch(getToDos());
     }, [dispatch]);
 
-    const handleAddToDo = (newTodo: ToDo) => {
-        dispatch(addToDo(newTodo));
-    };
+    // const handleAddToDo = (newTodo: Todo) => {
+    //     dispatch(addToDo(newTodo));
+    // };
 
-    const handleDeleteToDO = (toDoId: string) => {
-        dispatch(deleteToDo(toDoId));
-    };
+    // const handleDeleteToDO = (toDoId: number) => {
+    //     dispatch(deleteToDo(toDoId));
+    // };
 
-    const handleToggleIsDone = (toDoId: string) => {
-        dispatch(toggleIsDone(toDoId));
-    };
+    // const handleToggleIsDone = (toDoId: number) => {
+    //     dispatch(toggleIsDone(toDoId));
+    // };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -42,8 +41,8 @@ function ToDoContainer() {
         return <div>Error: {error}</div>;
     }
 
-    const workingToDos: ToDo[] = toDos.filter((todo: ToDo) => !todo.isDone);
-    const doneToDos: ToDo[] = toDos.filter((todo: ToDo) => todo.isDone);
+    const workingToDos: Todo[] = toDos.filter((todo: Todo) => !todo.isDone);
+    const doneToDos: Todo[] = toDos.filter((todo: Todo) => todo.isDone);
 
     console.log(toDos);
 
@@ -55,20 +54,21 @@ function ToDoContainer() {
                     <p>React</p>
                 </header>
 
-                <Form addToDo={handleAddToDo} />
+                {/* <Form addToDo={handleAddToDo} /> */}
+                <Form />
 
                 <section className="content_section">
                     <CardList
                         title={"Working...🔥"}
                         toDos={workingToDos}
-                        deleteToDo={handleDeleteToDO}
-                        toggleIsDone={handleToggleIsDone}
+                        // deleteToDo={handleDeleteToDO}
+                        // toggleIsDone={handleToggleIsDone}
                     />
                     <CardList
                         title={"Done...🎉"}
                         toDos={doneToDos}
-                        deleteToDo={handleDeleteToDO}
-                        toggleIsDone={handleToggleIsDone}
+                        // deleteToDo={handleDeleteToDO}
+                        // toggleIsDone={handleToggleIsDone}
                     />
                 </section>
             </div>

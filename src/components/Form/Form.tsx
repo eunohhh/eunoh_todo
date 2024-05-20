@@ -1,13 +1,91 @@
 // import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useDispatch } from "react-redux";
+import styled from "styled-components";
 import "../../App.css";
-import { ToDo } from "../../d";
+// import { Todo } from "../../types/supabase";
+import { AppDispatch } from "../../store/store";
+import { addToDo } from "../../store/todoSlice";
 
-type FormProps = {
-    addToDo: (arg: ToDo) => void;
-};
+// type FormProps = {
+//     addToDo: (arg: Todo) => void;
+// };
 
-const Form = ({ addToDo }: FormProps) => {
+const InputSection = styled.section`
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    background-color: rgb(222, 222, 222);
+    color: rgb(79, 79, 79);
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 1rem;
+`;
+
+const SubmitForm = styled.form`
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    & > button {
+        background: var(--button-bg-color);
+        color: var(--button-color);
+        margin: 0;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        font-weight: 400;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        display: inline-block;
+        width: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+        transition: 0.5s;
+    }
+    button:active,
+    button:hover,
+    button:focus {
+        background: var(--button-hover-bg-color);
+        outline: 0;
+    }
+    button:disabled {
+        opacity: 0.5;
+    }
+`;
+
+const InputArea = styled.div`
+    width: 80%;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+
+    & > input {
+        color: rgb(79, 79, 79);
+        font-size: 16px;
+        font-size: max(16px, 1em);
+        font-family: inherit;
+        padding: 0.25em 0.5em;
+        background-color: #fff;
+        border: 2px solid var(--input-border);
+        border-radius: 4px;
+    }
+    input:nth-child(4) {
+        width: 50%;
+    }
+`;
+
+const Form = () => {
+    const dispatch: AppDispatch = useDispatch();
+
     // 폼 서브밋 핸들러
     // 인풋핸들러에서 설정된 투두 객체를 투두스 배열에 추가
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,21 +102,21 @@ const Form = ({ addToDo }: FormProps) => {
             alert("내용을 입력해 주세요!");
         }
         const newTodo = {
-            id: uuidv4(),
             title,
             body: content,
             isDone: false,
+            created_at: new Date().toISOString(), // ISO 문자열로 변환
         };
-        addToDo(newTodo);
+        dispatch(addToDo(newTodo));
 
         // 추가하고 나면 폼 리셋 시키기!!
         form.reset();
     };
 
     return (
-        <div className="input_section">
-            <form className="submit_form" onSubmit={handleSubmit}>
-                <div className="input_area">
+        <InputSection>
+            <SubmitForm onSubmit={handleSubmit}>
+                <InputArea>
                     <label htmlFor="title">제목</label>
                     <input
                         type="text"
@@ -55,11 +133,11 @@ const Form = ({ addToDo }: FormProps) => {
                         // onChange={handleChange}
                         // value={todo.body}
                     ></input>
-                </div>
+                </InputArea>
 
                 <button type="submit">추가하기</button>
-            </form>
-        </div>
+            </SubmitForm>
+        </InputSection>
     );
 };
 
