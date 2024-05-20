@@ -13,9 +13,11 @@ import Form from "../Form";
 
 function ToDoContainer() {
     const dispatch: AppDispatch = useDispatch();
-    const { toDos, loading, error } = useSelector(
-        (state: RootState) => state.toDos
-    );
+    const {
+        toDos,
+        // loading,
+        error,
+    } = useSelector((state: RootState) => state.toDos);
 
     useEffect(() => {
         dispatch(getToDos());
@@ -33,9 +35,9 @@ function ToDoContainer() {
     //     dispatch(toggleIsDone(toDoId));
     // };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     if (error) {
         return <div>Error: {error}</div>;

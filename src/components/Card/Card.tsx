@@ -63,6 +63,7 @@ const Card = memo(({ todo }: TodoProps) => {
 
     // 클릭 핸들러
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         if (e.currentTarget.id === "fin_cancel") {
             dispatch(updateToDo(todo));
 

@@ -70,16 +70,20 @@ export const updateToDo = createAsyncThunk<
     return data as Todo;
 });
 
+// 삭제 Thunk 액션 생성
 export const deleteToDo = createAsyncThunk<
-    Promise<ErrorConstructor | undefined>,
-    number
->("todos/deleteTodo", async (todoId) => {
-    const { error } = await supabase.from("todolist").delete().eq("id", todoId);
+    number,
+    number,
+    { rejectValue: string }
+>("todos/deleteToDo", async (id, { rejectWithValue }) => {
+    const { error } = await supabase.from("todolist").delete().eq("id", id);
 
     if (error) {
         console.log("error => ", error);
-        return Error;
+        return rejectWithValue("Failed to delete todo");
     }
+
+    return id;
 });
 
 interface ToDoState {
@@ -159,6 +163,22 @@ const todoSlice = createSlice({
                 }
             )
             .addCase(updateToDo.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message as string;
+            })
+            .addCase(deleteToDo.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(
+                deleteToDo.fulfilled,
+                (state, action: PayloadAction<number>) => {
+                    state.loading = false;
+                    state.toDos = state.toDos.filter(
+                        (todo) => todo.id !== action.payload
+                    );
+                }
+            )
+            .addCase(deleteToDo.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message as string;
             });
